@@ -20,7 +20,7 @@ class ModelPipeline:
         self.params = params
         self.best_model = None
 
-    def grid_search(self, X, y, cv=5):
+    def grid_search(self, X, y, cv=5, scoring="f1"):
         """
         Perform grid search with cross-validation.
 
@@ -32,7 +32,7 @@ class ModelPipeline:
         Returns:
             dict: Best parameters found.
         """
-        grid_search = GridSearchCV(self.pipeline, self.params, cv=cv, scoring="accuracy")
+        grid_search = GridSearchCV(self.pipeline, self.params, cv=cv, scoring=scoring)
         grid_search.fit(X, y)
         self.best_model = grid_search.best_estimator_
         return grid_search.best_params_

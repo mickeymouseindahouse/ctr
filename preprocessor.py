@@ -20,7 +20,7 @@ class Preprocessor:
         self.cat_features = cat_features if cat_features else []
         self.preprocessor = None
 
-    def fit(self, X: pd.DataFrame):
+    def fit(self, X: pd.DataFrame, y=None):
         """
         Fit the preprocessor to the data.
 
@@ -43,9 +43,10 @@ class Preprocessor:
 
         # Fit the preprocessor on the data
         self.preprocessor.fit(X)
+        return self
 
 
-    def transform(self, X: pd.DataFrame):
+    def transform(self, X: pd.DataFrame, y=None):
         """
                 Transform the input data using the fitted preprocessor.
 
@@ -58,11 +59,10 @@ class Preprocessor:
         if not self.preprocessor:
             raise ValueError("Preprocessor has not been fitted. Call fit() before transform().")
 
-        # Apply transformations
         transformed_data = self.preprocessor.transform(X)
         return pd.DataFrame(transformed_data)
 
-    def fit_transform(self, X: pd.DataFrame) -> pd.DataFrame:
+    def fit_transform(self, X: pd.DataFrame, y=None) -> pd.DataFrame:
         """
         Fit the preprocessor and transform the input data.
 
