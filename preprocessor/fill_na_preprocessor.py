@@ -5,6 +5,7 @@ import numpy as np
 import pandas as pd
 
 from preprocessor import Preprocessor
+from preprocessor.base_prepocessor import BasePreprocessor
 
 
 class FillAlgo(enum.Enum):
@@ -27,7 +28,7 @@ class FillAlgo(enum.Enum):
 
 
 
-class FillNaPreprocessor(Preprocessor):
+class FillNaPreprocessor(BasePreprocessor):
     def __init__(self, columns: Optional[list[str]] = None,
                  fill_algo: FillAlgo = FillAlgo.MODE,
                  custom_function: Optional[Callable] = None):
