@@ -1,6 +1,6 @@
 from sklearn.model_selection import train_test_split
 
-from data_loader import DataLoader
+from data_loader.base_data_loader import DataLoader
 
 
 class LisaDataLoader(DataLoader):

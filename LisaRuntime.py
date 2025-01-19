@@ -1,6 +1,6 @@
 from sklearn.linear_model import LogisticRegression
 
-from data_loader import DataLoader
+from data_loader.base_data_loader import DataLoader
 from model_pipeline import ModelPipeline
 from preprocessor import Preprocessor
 
