@@ -1,27 +1,17 @@
-import pickle
+import os
+from datetime import datetime
 
 import pandas as pd
+from sklearn.base import TransformerMixin, BaseEstimator
+
+from pickle_object import PickleObject
 
 
-class BasePreprocessor:
-    # def __init__(self, numerical_features=None, cat_features=None):
-    #     """
-    #     Initialize the Preprocessor.
-    #
-    #     Args:
-    #        numerical_features (list): List of numerical column names to be scaled.
-    #        cat_features (list): List of categorical column names to be encoded.
-    #     """
-    #     if cat_features is None:
-    #         cat_features = ['product', 'gender']
-    #     self.numerical_features = numerical_features if numerical_features else []
-    #     self.cat_features = cat_features if cat_features else []
-    #     self.preprocessor = None
-
+class BasePreprocessor(PickleObject, TransformerMixin, BaseEstimator):
     def __init__(self):
-        self.preprocessor = None
+        self.X_transformed = None
 
-    def fit(self, X: pd.DataFrame, y=None):
+    def fit(self, X: pd.DataFrame, y=None) -> 'BasePreprocessor':
         """
         Fit the preprocessor to the data.
 
@@ -31,7 +21,7 @@ class BasePreprocessor:
         """
         return self
 
-    def transform(self, X: pd.DataFrame, y=None):
+    def transform(self, X: pd.DataFrame, y=None) -> pd.DataFrame:
         """
                 Transform the input data using the fitted preprocessor.
 
@@ -41,7 +31,7 @@ class BasePreprocessor:
                 Returns:
                     pd.DataFrame: The transformed data.
                 """
-        return X
+        pass
 
     def fit_transform(self, X: pd.DataFrame, y=None) -> pd.DataFrame:
         """
@@ -56,31 +46,8 @@ class BasePreprocessor:
         self.fit(X)
         return self.transform(X)
 
-    def save_to_pickle(self, file_path: str):
-        """
-        Save the fitted preprocessor to a pickle file.
-
-        Args:
-            file_path (str): Path to the pickle file to save the preprocessor.
-        """
-        if not self.preprocessor:
-            raise ValueError("Preprocessor has not been fitted. Call fit() before saving.")
-
-        with open(file_path, "wb") as f:
-            pickle.dump(self.preprocessor, f)
-
-    @staticmethod
-    def load_from_pickle(file_path: str):
-        """
-        Load a preprocessor from a pickle file.
-
-        Args:
-            file_path (str): Path to the pickle file.
-
-        Returns:
-            Preprocessor: The loaded preprocessor.
-        """
-        with open(file_path, "rb") as f:
-            loaded_preprocessor = pickle.load(f)
-
-        return loaded_preprocessor
+    def save_transformed(self):
+        if self.X_transformed is None:
+            raise ValueError("No transformed data available")
+        (pd.DataFrame(self.X_transformed).
+         to_csv(f'{os.getenv('PROJECT_ROOT')}/results/{self.__class__.__name__}-{datetime.now().strftime('%Y%m%d_%H%M%S')}.csv'))

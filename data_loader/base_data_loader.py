@@ -1,9 +1,14 @@
+from typing import Tuple
+
 import pandas as pd
 from sklearn.model_selection import train_test_split
 
-class BaseDataLoader:
+from pickle_object import PickleObject
+
+
+class BaseDataLoader(PickleObject):
     def __init__(self, train_file: str, test_file: str = None, target_column: str = 'is_click',
-                 date_columns: tuple[str] = 'DateTime'):
+                 date_columns: Tuple[str, ...] = ('DateTime',)):
         """
         Initialize the DataLoader.
 
@@ -11,7 +16,7 @@ class BaseDataLoader:
             train_file (str): Path to the training CSV file.
             test_file (str): Path to the test CSV file (optional).
             target_column (str): Name of the target column (optional).
-            date_columns (tuple[str]): Tuple of column names to parse as date columns.
+            date_columns (Tuple[str, ...]): Tuple of column names to parse as date columns.
         """
         self.train_file = train_file
         self.test_file = test_file
@@ -22,9 +27,9 @@ class BaseDataLoader:
 
     def load_data(self):
         """Load training and test data from CSV files."""
-        self.train_data = pd.read_csv(self.train_file, parse_dates=self.date_columns)
+        self.train_data = pd.read_csv(self.train_file, parse_dates=list(self.date_columns))
         if self.test_file:
-            self.test_data = pd.read_csv(self.test_file, parse_dates=self.date_columns)
+            self.test_data = pd.read_csv(self.test_file, parse_dates=list(self.date_columns))
         else:
             self.test_data = None
 

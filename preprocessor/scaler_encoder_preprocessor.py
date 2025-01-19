@@ -5,7 +5,7 @@ from sklearn.compose import ColumnTransformer
 from sklearn.preprocessing import LabelEncoder, OneHotEncoder, StandardScaler
 
 from preprocessor.base_prepocessor import BasePreprocessor
-from preprocessor.constants import ONE_HOT_ENCODER, LABEL_ENCODER, SCALER
+from constants import ONE_HOT_ENCODER, LABEL_ENCODER, SCALER
 
 
 class ScalerEncoderPreprocessor(BasePreprocessor):

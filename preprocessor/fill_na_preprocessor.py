@@ -4,7 +4,6 @@ from typing import Optional, Callable
 import numpy as np
 import pandas as pd
 
-from preprocessor import Preprocessor
 from preprocessor.base_prepocessor import BasePreprocessor
 
 
@@ -48,11 +47,3 @@ class FillNaPreprocessor(BasePreprocessor):
         if self.fill_values is None:
             raise ValueError("FillNaPreprocessor should have been fit before transform")
         return X[self.columns].fillna(value=self.fill_values) if self.columns else X.fillna(value=self.fill_values)
-
-
-
-if __name__ == "__main__":
-    df = pd.DataFrame({"a": [1, np.nan, 1], "b": [4, np.nan, np.nan]})
-    preprocessor = FillNaPreprocessor()
-    preprocessor.fit(df)
-    print(preprocessor.transform(df))
