@@ -19,6 +19,7 @@ class BaseModelPipeline(PickleObject):
         """
         self.pipeline = Pipeline([
             (step.__class__.__name__, step) for step in steps])
+        print(f"pipeline: {self.pipeline}")
         self.params = {f"{class_name}__{k}": v for class_name, item_dict in params.items() for k, v in item_dict.items()}
         self.best_model = None
         self.best_score = None

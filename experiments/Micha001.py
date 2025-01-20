@@ -12,7 +12,7 @@ if __name__ == '__main__':
     data_loader.load_data()
     X_train, X_test, y_train, y_test = data_loader.split_data()
 
-    pipeline = BaseModelPipeline(steps=[FillNaPreprocessor, ScalerEncoderPreprocessor, LogRegModel], params={"LogRegModel": {
+    pipeline = BaseModelPipeline(steps=[FillNaPreprocessor(), ScalerEncoderPreprocessor(), LogRegModel()], params={"LogRegModel": {
         "C": [0.1, 1, 10]
     }})
     pipeline.fit(X_train, y_train)

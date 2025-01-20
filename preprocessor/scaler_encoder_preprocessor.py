@@ -11,7 +11,7 @@ from constants import ONE_HOT_ENCODER, LABEL_ENCODER, SCALER
 class ScalerEncoderPreprocessor(BasePreprocessor):
     def __init__(self, numeric_features: Optional[list[str]], one_hot_features: Optional[list[str]],
                  label_features: Optional[list[str]]):
-        super.__init__()
+        super().__init__()
         self.numeric_features = numeric_features
         self.one_hot_features = one_hot_features
         self.label_features = label_features
