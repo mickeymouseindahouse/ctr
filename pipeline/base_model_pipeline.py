@@ -9,7 +9,7 @@ from pickle_object import PickleObject
 
 
 class BaseModelPipeline(PickleObject):
-    def __init__(self, steps: List[PickleObject], params: dict[str, dict], score=f1_score, random_state=42):
+    def __init__(self, steps: List[PickleObject], params: dict[str, dict]=None, score=f1_score, random_state=42):
         """
         Initialize the pipeline.
 
@@ -19,8 +19,8 @@ class BaseModelPipeline(PickleObject):
         """
         self.pipeline = Pipeline([
             (step.__class__.__name__, step) for step in steps])
-        print(f"pipeline: {self.pipeline}")
-        self.params = {f"{class_name}__{k}": v for class_name, item_dict in params.items() for k, v in item_dict.items()}
+        self.params = {f"{class_name}__{k}": v for class_name, item_dict in params.items() for k, v in item_dict.items()} if params else None
+        self.score = score
         self.best_model = None
         self.best_score = None
         self.best_params = None
@@ -30,6 +30,13 @@ class BaseModelPipeline(PickleObject):
         self.pipeline.fit(X_train, y_train)
         return self
 
+    def transform(self, X):
+        return self.pipeline.transform(X)
+
+    def fit_transform(self, X):
+        self.fit(X, y_train=None)
+        return self.transform(X)
+
     def predict(self, X):
         """Make predictions."""
         return self.pipeline.predict(X)
@@ -38,9 +45,6 @@ class BaseModelPipeline(PickleObject):
         """Make predictions."""
         self.fit(X, y)
         return self.predict(X)
-
-    def score(self, X, y):
-        return self.pipeline.score(X, y)
 
     def evaluate(self, X, y):
         """Evaluate the model on test data."""

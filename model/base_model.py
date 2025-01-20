@@ -36,9 +36,6 @@ class BaseModel(PickleObject, BaseEstimator):
         self.fit(X, y)
         return self.predict(X)
 
-    def score(self, X, y):
-        return self.model.score(X, y)
-
     def evaluate(self, X, y):
         """Evaluate the model on test data."""
         y_pred = self.predict(X)

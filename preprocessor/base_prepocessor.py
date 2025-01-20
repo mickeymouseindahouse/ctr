@@ -33,7 +33,7 @@ class BasePreprocessor(PickleObject, TransformerMixin, BaseEstimator):
                 """
         pass
 
-    def fit_transform(self, X: pd.DataFrame, y=None) -> pd.DataFrame:
+    def fit_transform(self, X: pd.DataFrame, y=None, **fit_params) -> pd.DataFrame:
         """
         Fit the preprocessor and transform the input data.
 

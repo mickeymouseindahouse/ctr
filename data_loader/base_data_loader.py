@@ -4,11 +4,13 @@ import pandas as pd
 from sklearn.model_selection import train_test_split
 
 from pickle_object import PickleObject
+from pipeline.base_model_pipeline import BaseModelPipeline
+from preprocessor.base_prepocessor import BasePreprocessor
 
 
 class BaseDataLoader(PickleObject):
     def __init__(self, train_file: str, test_file: str = None, target_column: str = 'is_click',
-                 date_columns: Tuple[str, ...] = ('DateTime',)):
+                 date_columns: Tuple[str, ...] = ('DateTime',), preprocessing: BaseModelPipeline = None):
         """
         Initialize the DataLoader.
 
@@ -17,6 +19,7 @@ class BaseDataLoader(PickleObject):
             test_file (str): Path to the test CSV file (optional).
             target_column (str): Name of the target column (optional).
             date_columns (Tuple[str, ...]): Tuple of column names to parse as date columns.
+            preprocessing: BaseModelPipeline Preprocessing pipeline you wanna carry out before splitting
         """
         self.train_file = train_file
         self.test_file = test_file
@@ -24,6 +27,7 @@ class BaseDataLoader(PickleObject):
         self.train_data = None
         self.test_data = None
         self.date_columns = date_columns
+        self.preprocessing = preprocessing
 
     def load_data(self):
         """Load training and test data from CSV files."""
@@ -32,6 +36,14 @@ class BaseDataLoader(PickleObject):
             self.test_data = pd.read_csv(self.test_file, parse_dates=list(self.date_columns))
         else:
             self.test_data = None
+        self._preprocess_data()
+
+    def _preprocess_data(self):
+        if self.preprocessing is not None:
+            self.train_data = self.preprocessing.fit_transform(X=self.train_data)
+        if self.test_data is not None:
+            self.test_data = self.preprocessing.transform(X=self.test_data)
+
 
     def split_data(self, test_size=0.2, random_state=42) -> tuple:
         """
