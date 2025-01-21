@@ -5,12 +5,11 @@ from sklearn.model_selection import train_test_split
 
 from pickle_object import PickleObject
 from pipeline.base_model_pipeline import BaseModelPipeline
-from preprocessor.base_prepocessor import BasePreprocessor
 
 
 class BaseDataLoader(PickleObject):
     def __init__(self, train_file: str, test_file: str = None, target_column: str = 'is_click',
-                 date_columns: Tuple[str, ...] = ('DateTime',), preprocessing: BaseModelPipeline = None):
+                 date_columns: Tuple[str, ...] = ('DateTime',), preprocessing: BaseModelPipeline = None, results_path: str = ''):
         """
         Initialize the DataLoader.
 
@@ -21,6 +20,7 @@ class BaseDataLoader(PickleObject):
             date_columns (Tuple[str, ...]): Tuple of column names to parse as date columns.
             preprocessing: BaseModelPipeline Preprocessing pipeline you wanna carry out before splitting
         """
+        super().__init__(results_path)
         self.train_file = train_file
         self.test_file = test_file
         self.target_column = target_column
@@ -39,6 +39,7 @@ class BaseDataLoader(PickleObject):
         self._preprocess_data()
 
     def _preprocess_data(self):
+        """Preprocess train and test data if available."""
         if self.preprocessing is not None:
             self.train_data = self.preprocessing.fit_transform(X=self.train_data)
         if self.test_data is not None:

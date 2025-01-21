@@ -1,7 +1,6 @@
 import enum
 from typing import Optional, Callable
 
-import numpy as np
 import pandas as pd
 
 from constants import getroot
@@ -32,8 +31,9 @@ class FillAlgo(enum.Enum):
 class FillNaPreprocessor(BasePreprocessor):
     def __init__(self, columns: Optional[list[str]] = None,
                  fill_algo: FillAlgo = FillAlgo.MODE,
-                 custom_function: Optional[Callable] = None):
-        super().__init__()
+                 custom_function: Optional[Callable] = None,
+                 results_path: str = ''):
+        super().__init__(results_path=results_path)
         self.columns = columns
         self.custom_function = custom_function
         self.fill_algo = fill_algo

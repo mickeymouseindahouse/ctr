@@ -1,14 +1,19 @@
 import os
-import pickle
+import dill as pickle
 from datetime import datetime
 
 
 class PickleObject:
-    def dump_to_pickle(self, ) -> None:
+    def __init__(self, result_path: str = ''):
+        self.result_path = result_path
+
+    def dump_to_pickle(self, class_name: str = None) -> None:
         """
         Save the fitted preprocessor to a pickle file.
         """
-        file_path = f'{os.getenv('PROJECT_ROOT')}/results/{self.__class__.__name__}-{datetime.now().strftime('%Y%m%d_%H%M%S')}.pkl'
+        file_path = os.path.join(os.getenv('PROJECT_ROOT'), 'results', self.result_path,
+                                 f'{class_name or self.__class__.__name__}-{datetime.now().strftime('%Y%m%d_%H%M%S')}.pkl')
+        os.makedirs(os.path.dirname(file_path), exist_ok=True)
         with open(file_path, "wb") as f:
             pickle.dump(self, f)
 

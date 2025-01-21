@@ -8,7 +8,8 @@ from pickle_object import PickleObject
 
 
 class BasePreprocessor(PickleObject, TransformerMixin, BaseEstimator):
-    def __init__(self):
+    def __init__(self, results_path: str = ''):
+        super().__init__(results_path)
         self.X_transformed = None
 
     def fit(self, X: pd.DataFrame, y=None) -> 'BasePreprocessor':

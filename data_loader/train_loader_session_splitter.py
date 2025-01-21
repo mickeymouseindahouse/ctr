@@ -22,8 +22,8 @@ class TrainLoaderSessionSplitter(BaseDataLoader):
         train_sessions = session_timestamps['session_id'].iloc[:train_size]
         test_sessions = session_timestamps['session_id'].iloc[train_size:]
 
-        train_df = self.train_data[self.train_data['session_id'].isin(train_sessions)]
-        test_df = self.train_data[self.train_data['session_id'].isin(test_sessions)]
+        train_df = self.train_data[self.train_data['session_id'].isin(train_sessions)].copy()
+        test_df = self.train_data[self.train_data['session_id'].isin(test_sessions)].copy(0)
 
         train_df["day"] = train_df.DateTime.dt.day
         test_df["day"] = test_df.DateTime.dt.day
@@ -31,7 +31,7 @@ class TrainLoaderSessionSplitter(BaseDataLoader):
         test_df.drop(["DateTime"], axis=1, inplace=True)
 
         X_train, X_test, y_train, y_test = \
-            train_df.drop(columns=['is_click']), test_df.drop(columns=['is_click']), train_df[['is_click']].values, \
+            train_df.drop(columns=['is_click']), test_df.drop(columns=['is_click']), train_df[['is_click']].values.ravel(), \
             test_df[
-                ['is_click']].values
+                ['is_click']].values.ravel()
         return X_train, X_test, y_train, y_test
