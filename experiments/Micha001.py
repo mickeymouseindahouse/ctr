@@ -2,6 +2,7 @@ import os.path
 
 import numpy as np
 from sklearn.linear_model import LogisticRegression
+from sklearn.tree import DecisionTreeClassifier
 
 from constants import getroot
 from data_loader.train_loader_session_splitter import TrainLoaderSessionSplitter
@@ -22,7 +23,7 @@ if __name__ == '__main__':
             one_hot_features=['gender', 'product'],
             label_features=['user_depth']
         ),
-        BaseModel(model=LogisticRegression(max_iter=1000, penalty='l2', solver='lbfgs', tol=0.0001)),],
+        BaseModel(model=DecisionTreeClassifier()),],
         grid_search_params={"LogRegModel": {"C": [0.1, 1, 10, 1000, 1000], "max_iter": [1000000, 10000000]},})
     preds = pipeline.fit_predict(X_train, y_train)
     pipeline.dump_to_pickle()
