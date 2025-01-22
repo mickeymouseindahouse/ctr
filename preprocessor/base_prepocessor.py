@@ -8,8 +8,8 @@ from pickle_object import PickleObject
 
 
 class BasePreprocessor(PickleObject, TransformerMixin, BaseEstimator):
-    def __init__(self, results_path: str = ''):
-        super().__init__(results_path)
+    def __init__(self, result_path: str = ''):
+        super().__init__(result_path)
         self.X_transformed = None
 
     def fit(self, X: pd.DataFrame, y=None) -> 'BasePreprocessor':
@@ -34,18 +34,9 @@ class BasePreprocessor(PickleObject, TransformerMixin, BaseEstimator):
                 """
         pass
 
-    def fit_transform(self, X: pd.DataFrame, y=None, **fit_params) -> pd.DataFrame:
-        """
-        Fit the preprocessor and transform the input data.
-
-        Args:
-            X (pd.DataFrame): The input data to fit and transform.
-
-        Returns:
-            pd.DataFrame: The transformed data.
-        """
-        self.fit(X)
-        return self.transform(X)
+    def fit_transform(self, X: pd.DataFrame, y=None) -> pd.DataFrame:
+        """Fit and transform the data."""
+        return self.fit(X, y).transform(X)
 
     def save_transformed(self):
         if self.X_transformed is None:

@@ -9,7 +9,7 @@ from pipeline.base_model_pipeline import BaseModelPipeline
 
 class BaseDataLoader(PickleObject):
     def __init__(self, train_file: str, test_file: str = None, target_column: str = 'is_click',
-                 date_columns: Tuple[str, ...] = ('DateTime',), preprocessing: BaseModelPipeline = None, results_path: str = ''):
+                 date_columns: Tuple[str, ...] = ('DateTime',), preprocessing: BaseModelPipeline = None, result_path: str = ''):
         """
         Initialize the DataLoader.
 
@@ -20,7 +20,7 @@ class BaseDataLoader(PickleObject):
             date_columns (Tuple[str, ...]): Tuple of column names to parse as date columns.
             preprocessing: BaseModelPipeline Preprocessing pipeline you wanna carry out before splitting
         """
-        super().__init__(results_path)
+        super().__init__(result_path)
         self.train_file = train_file
         self.test_file = test_file
         self.target_column = target_column

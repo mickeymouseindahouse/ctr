@@ -9,7 +9,7 @@ from pickle_object import PickleObject
 
 
 class BaseModelPipeline(PickleObject):
-    def __init__(self, steps: List[PickleObject], grid_search_params: dict[str, dict]=None, score=f1_score, random_state=42, results_path: str = ''):
+    def __init__(self, steps: List[PickleObject], grid_search_params: dict[str, dict]=None, scoring=f1_score, random_state=42, result_path: str = ''):
         """
         Initialize the pipeline.
 
@@ -17,12 +17,15 @@ class BaseModelPipeline(PickleObject):
             steps: list of PicketObjects like Preprocessors or Models
             grid_search_params: dict of parameters to pass to the pipeline. key is class name, value is param dict for class
         """
-        super().__init__(results_path)
+        super().__init__(result_path)
         self.pipeline = Pipeline([
             (step.__class__.__name__, step) for step in steps])
-        self.grid_search_params = {f"{class_name}__{k}": v for class_name, item_dict in grid_search_params.items()
-                       for k, v in item_dict.items()} if grid_search_params else None
-        self.score = score
+        self.grid_search_params = {
+            f"{class_name}__{param_name}": values
+            for class_name, params in (grid_search_params or {}).items()
+            for param_name, values in params.items()
+        }
+        self.scoring = scoring
         self.best_model = None
         self.best_score = None
         self.best_params = None
@@ -35,8 +38,8 @@ class BaseModelPipeline(PickleObject):
     def transform(self, X):
         return self.pipeline.transform(X)
 
-    def fit_transform(self, X):
-        self.fit(X, y_train=None)
+    def fit_transform(self, X, y_train=None):
+        self.fit(X, y_train)
         return self.transform(X)
 
     def predict(self, X):
@@ -48,14 +51,23 @@ class BaseModelPipeline(PickleObject):
         self.fit(X, y)
         return self.predict(X)
 
+    def score(self, X, y, **kwargs):
+        """Custom scoring method."""
+        y_pred = self.predict(X)
+        return self.scoring(y, y_pred, **kwargs)
+
     def evaluate(self, X, y):
         """Evaluate the model on test data."""
-        y_pred = self.predict(X)
-        return self.score(y, y_pred)
+        return self.score(X, y)
 
     def grid_search(self, X_train, y_train, cv=5):
         """Perform grid search to optimize hyperparameters."""
-        grid_search = GridSearchCV(self.pipeline, self.grid_search_params, cv=cv, scoring=self.score)
+
+        def wrapper_scorer(estimator, X, y):
+            y_pred = estimator.predict(X)
+            return self.scoring(y, y_pred)
+
+        grid_search = GridSearchCV(self.pipeline, self.grid_search_params, cv=cv, scoring=wrapper_scorer)
         grid_search.fit(X_train, y_train)
         self.best_model = grid_search.best_estimator_
         self.best_score, self.best_params = grid_search.best_score_, grid_search.best_params_

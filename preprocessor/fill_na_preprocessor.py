@@ -32,8 +32,8 @@ class FillNaPreprocessor(BasePreprocessor):
     def __init__(self, columns: Optional[list[str]] = None,
                  fill_algo: FillAlgo = FillAlgo.MODE,
                  custom_function: Optional[Callable] = None,
-                 results_path: str = ''):
-        super().__init__(results_path=results_path)
+                 result_path: str = ''):
+        super().__init__(result_path=result_path)
         self.columns = columns
         self.custom_function = custom_function
         self.fill_algo = fill_algo

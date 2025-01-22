@@ -10,21 +10,23 @@ from constants import ONE_HOT_ENCODER, LABEL_ENCODER, SCALER
 
 class ScalerEncoderPreprocessor(BasePreprocessor):
     def __init__(self, numeric_features: Optional[list[str]]=None, one_hot_features: Optional[list[str]]=None,
-                 label_features: Optional[list[str]]=None, results_path: str = ''):
-        super().__init__(results_path=results_path)
+                 label_features: Optional[list[str]]=None, result_path: str = ''):
+        self.result_path = result_path
+        super().__init__(result_path=result_path)
         self.preprocessor = None
         self.numeric_features = numeric_features
         self.one_hot_features = one_hot_features
         self.label_features = label_features
 
     def fit(self, X: pd.DataFrame, y=None):
-        self.preprocessor = ColumnTransformer(transformers=[], remainder="passthrough")
+        transformers = []
         if self.numeric_features:
-            self.preprocessor.transformers.append((SCALER, StandardScaler(), self.numeric_features))
+            transformers.append((SCALER, StandardScaler(), self.numeric_features))
         if self.one_hot_features:
-            self.preprocessor.transformers.append((ONE_HOT_ENCODER, OneHotEncoder(drop='first'), self.one_hot_features))
+            transformers.append((ONE_HOT_ENCODER, OneHotEncoder(drop='first'), self.one_hot_features))
         if self.label_features:
-            self.preprocessor.transformers.append((LABEL_ENCODER, OrdinalEncoder(), self.label_features))
+            transformers.append((LABEL_ENCODER, OrdinalEncoder(), self.label_features))
+        self.preprocessor = ColumnTransformer(transformers=transformers, remainder="passthrough")
         self.preprocessor.fit(X)
         return self
 
