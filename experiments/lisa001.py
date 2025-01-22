@@ -1,16 +1,28 @@
 import os.path
-
-import numpy as np
 from sklearn.tree import DecisionTreeClassifier
-
 from constants import getroot
 from data_loader.train_loader_session_splitter import TrainLoaderSessionSplitter
 from model.base_model import BaseModel
 from pipeline.base_model_pipeline import BaseModelPipeline
+from preprocessor.ctr_ratio_preprocessor import RatioBasedPreprocessor
 from preprocessor.fill_na_preprocessor import FillNaPreprocessor
-from preprocessor.scaler_encoder_preprocessor import ScalerEncoderPreprocessor
+RESULT_PATH = 'Lisa001'
 
 if __name__ == '__main__':
-    data_loader = TrainLoaderSessionSplitter(result_path="lisa001", train_file=os.path.join(getroot(), "data/train_dataset_full.csv"),
+    data_loader = TrainLoaderSessionSplitter(result_path=RESULT_PATH,
+                                             train_file=os.path.join(getroot(), "data/train_dataset_full.csv"),
                                              preprocessing=BaseModelPipeline(steps=[FillNaPreprocessor()]))
     data_loader.load_data()
+    X_train, X_test, y_train, y_test = data_loader.split_data()
+    data_loader.dump_to_pickle()
+
+    pipeline = BaseModelPipeline(result_path=RESULT_PATH, steps=[
+        RatioBasedPreprocessor(
+            one_hot_features=['gender','product'],
+            label_features=['user_depth']
+        ),
+        BaseModel(model=DecisionTreeClassifier(class_weight='balanced')), ],
+                                 grid_search_params={"BaseModel": {"model__min_samples_leaf": [2, 1, 3], }}, )
+    pipeline.grid_search(X_train, y_train)
+    pipeline.dump_to_pickle()
+    pipeline.dump_results()
