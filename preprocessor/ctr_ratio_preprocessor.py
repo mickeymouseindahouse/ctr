@@ -8,6 +8,9 @@ from sklearn.base import BaseEstimator, TransformerMixin
 
 
 class CTRTransformer(BaseEstimator, TransformerMixin):
+    """
+    the preprocessor that uses mean ctr values per feature inplace of the feature itself
+    """
     def __init__(self, target_column='is_click', y=None):
         self.target_column = target_column
         self.feature_maps = {}
