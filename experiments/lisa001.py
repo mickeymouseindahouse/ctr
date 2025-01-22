@@ -18,8 +18,8 @@ if __name__ == '__main__':
 
     pipeline = BaseModelPipeline(result_path=RESULT_PATH, steps=[
         RatioBasedPreprocessor(
-            one_hot_features=['gender','product'],
-            label_features=['user_depth']
+            one_hot_features=['gender'],
+            label_features=['product', 'campaign_id','webpage_id','product_category_1', 'product_category_2']
         ),
         BaseModel(model=DecisionTreeClassifier(class_weight='balanced')), ],
                                  grid_search_params={"BaseModel": {"model__min_samples_leaf": [2, 1, 3], }}, )
