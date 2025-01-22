@@ -22,9 +22,8 @@ if __name__ == '__main__':
             one_hot_features=['gender', 'product'],
             label_features=['user_depth'],
         ),
-        BaseModel(model=DecisionTreeClassifier()),],
-        grid_search_params={"BaseModel": {"model__min_samples_leaf": [1, 2, 3],}},)
-    # pipeline.fit(X_train, y_train)
+        BaseModel(model=DecisionTreeClassifier(class_weight='balanced')),],
+        grid_search_params={"BaseModel": {"model__min_samples_leaf": [2, 1, 3],}},)
     pipeline.grid_search(X_train, y_train)
-    print(pipeline.best_params)
     pipeline.dump_to_pickle()
+    pipeline.dump_results()

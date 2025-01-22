@@ -60,16 +60,25 @@ class BaseModelPipeline(PickleObject):
         """Evaluate the model on test data."""
         return self.score(X, y)
 
-    def grid_search(self, X_train, y_train, cv=5):
+    def grid_search(self, X_train, y_train, cv=5, verbose=5, n_jobs=1):
         """Perform grid search to optimize hyperparameters."""
 
         def wrapper_scorer(estimator, X, y):
             y_pred = estimator.predict(X)
             return self.scoring(y, y_pred)
 
-        grid_search = GridSearchCV(self.pipeline, self.grid_search_params, cv=cv, scoring=wrapper_scorer)
+        print("Starting GridSearchCV")
+        grid_search = GridSearchCV(self.pipeline, self.grid_search_params, cv=cv, scoring=wrapper_scorer, verbose=verbose, n_jobs=n_jobs)
         grid_search.fit(X_train, y_train)
         self.best_model = grid_search.best_estimator_
         self.best_score, self.best_params = grid_search.best_score_, grid_search.best_params_
+        print("GridSearchCV complete with best score: %f" % self.best_score)
         return self.best_score, self.best_params
+
+    def dump_results(self, class_name: str = None, results: str = ''):
+        results = f"best_params = {self.best_params}\n"
+        results += f"best_model = {self.best_model}\n"
+        results += f"best_score = {self.best_score}\n"
+        super().dump_results(results=results)
+
 
