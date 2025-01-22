@@ -13,9 +13,9 @@ class TrainLoaderSessionSplitter(BaseDataLoader):
         :param random_state: ignored
         :return:
         """
-        session_timestamps = self.train_data.groupby('session_id')["DateTime"].min().reset_index()
+        session_timestamps = self.train_data.groupby('session_id')["datetime"].min().reset_index()
 
-        session_timestamps = session_timestamps.sort_values(by='DateTime')
+        session_timestamps = session_timestamps.sort_values(by='datetime')
 
         train_size = int(len(session_timestamps) * (1.0 - test_size))
 
@@ -25,10 +25,10 @@ class TrainLoaderSessionSplitter(BaseDataLoader):
         train_df = self.train_data[self.train_data['session_id'].isin(train_sessions)].copy()
         test_df = self.train_data[self.train_data['session_id'].isin(test_sessions)].copy(0)
 
-        train_df["day"] = train_df.DateTime.dt.day
-        test_df["day"] = test_df.DateTime.dt.day
-        train_df.drop(["DateTime"], axis=1, inplace=True)
-        test_df.drop(["DateTime"], axis=1, inplace=True)
+        train_df["day"] = train_df["datetime"].dt.day
+        test_df["day"] = test_df["datetime"].dt.day
+        train_df.drop(["datetime"], axis=1, inplace=True)
+        test_df.drop(["datetime"], axis=1, inplace=True)
 
         X_train, X_test, y_train, y_test = \
             train_df.drop(columns=['is_click']), test_df.drop(columns=['is_click']), train_df[['is_click']].values.ravel(), \
