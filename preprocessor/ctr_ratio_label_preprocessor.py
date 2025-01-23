@@ -9,7 +9,7 @@ from sklearn.preprocessing import LabelEncoder
 from preprocessor.ctr_ratio_preprocessor import RatioBasedPreprocessor, CTREncoder
 
 
-class CTRLabelEncoder(CTREncoder, BasePreprocessor, TransformerMixin):
+class CTRLabelEncoder(CTREncoder):
     """
     the preprocessor that uses mean ctr values to create labels for features
     """
