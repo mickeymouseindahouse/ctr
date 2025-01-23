@@ -4,10 +4,10 @@ from sklearn.compose import ColumnTransformer
 from sklearn.preprocessing import OneHotEncoder, StandardScaler
 from preprocessor.base_prepocessor import BasePreprocessor
 from constants import ONE_HOT_ENCODER, SCALER, CTR_LABEL_ENCODER
-from sklearn.base import BaseEstimator, TransformerMixin
+from sklearn.base import TransformerMixin
 
 
-class CTRTransformer(BaseEstimator, TransformerMixin):
+class CTRTransformer(BasePreprocessor, TransformerMixin):
     """
     the preprocessor that uses mean ctr values per feature inplace of the feature itself
     """
