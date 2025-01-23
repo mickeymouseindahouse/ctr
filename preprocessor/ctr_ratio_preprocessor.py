@@ -7,7 +7,7 @@ from constants import ONE_HOT_ENCODER, SCALER, CTR_LABEL_ENCODER
 from sklearn.base import TransformerMixin
 
 
-class CTRTransformer(BasePreprocessor, TransformerMixin):
+class CTREncoder(BasePreprocessor, TransformerMixin):
     """
     the preprocessor that uses mean ctr values per feature inplace of the feature itself
     """
@@ -56,7 +56,7 @@ class RatioBasedPreprocessor(BasePreprocessor):
         if self.one_hot_features:
             transformers.append((ONE_HOT_ENCODER, OneHotEncoder(drop='first'), self.one_hot_features))
         if self.label_features:
-            transformers.append((CTR_LABEL_ENCODER, CTRTransformer(target_column=self.target_column, y=y), self.label_features))
+            transformers.append((CTR_LABEL_ENCODER, CTREncoder(target_column=self.target_column, y=y), self.label_features))
         self.preprocessor = ColumnTransformer(transformers=transformers, remainder="passthrough")
         self.preprocessor.fit(X)
         return self

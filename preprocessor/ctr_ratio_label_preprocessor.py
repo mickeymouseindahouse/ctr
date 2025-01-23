@@ -6,10 +6,10 @@ from preprocessor.base_prepocessor import BasePreprocessor
 from constants import ONE_HOT_ENCODER, SCALER, CTR_LABEL_ENCODER
 from sklearn.base import TransformerMixin
 from sklearn.preprocessing import LabelEncoder
-from preprocessor.ctr_ratio_preprocessor import RatioBasedPreprocessor, CTRTransformer
+from preprocessor.ctr_ratio_preprocessor import RatioBasedPreprocessor, CTREncoder
 
 
-class CTRLabelTransformer(CTRTransformer,BasePreprocessor, TransformerMixin):
+class CTRLabelEncoder(CTREncoder, BasePreprocessor, TransformerMixin):
     """
     the preprocessor that uses mean ctr values to create labels for features
     """
@@ -66,7 +66,7 @@ class RatioBasedLabelPreprocessor(RatioBasedPreprocessor):
         if self.one_hot_features:
             transformers.append((ONE_HOT_ENCODER, OneHotEncoder(drop='first'), self.one_hot_features))
         if self.label_features:
-            transformers.append((CTR_LABEL_ENCODER, CTRLabelTransformer(target_column=self.target_column, y=y), self.label_features))
+            transformers.append((CTR_LABEL_ENCODER, CTRLabelEncoder(target_column=self.target_column, y=y), self.label_features))
         self.preprocessor = ColumnTransformer(transformers=transformers, remainder="passthrough")
         self.preprocessor.fit(X)
         return self
