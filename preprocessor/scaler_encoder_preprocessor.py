@@ -14,6 +14,7 @@ class ScalerEncoderPreprocessor(BasePreprocessor):
         self.result_path = result_path
         super().__init__(result_path=result_path)
         self.preprocessor = None
+        self.preprocessor_name = 'ScalerEncoderPreprocessor'
         self.numeric_features = numeric_features
         self.one_hot_features = one_hot_features
         self.label_features = label_features
@@ -32,5 +33,5 @@ class ScalerEncoderPreprocessor(BasePreprocessor):
 
     def transform(self, X: pd.DataFrame, y=None) -> pd.DataFrame:
         if self.preprocessor is None:
-            raise ValueError("ScalerEncoderPreprocessor should be fit before transform")
+            raise ValueError(f"{self.preprocessor_name} should be fit before transform")
         return self.preprocessor.transform(X)

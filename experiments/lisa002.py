@@ -4,9 +4,9 @@ from constants import getroot
 from data_loader.train_loader_session_splitter import TrainLoaderSessionSplitter
 from model.base_model import BaseModel
 from pipeline.base_model_pipeline import BaseModelPipeline
-from preprocessor.ctr_ratio_preprocessor import RatioBasedPreprocessor
+from preprocessor.ctr_ratio_label_preprocessor import RatioBasedLabelPreprocessor
 from preprocessor.fill_na_preprocessor import FillNaPreprocessor
-RESULT_PATH = 'Lisa001'
+RESULT_PATH = 'Lisa002'
 
 if __name__ == '__main__':
     data_loader = TrainLoaderSessionSplitter(result_path=RESULT_PATH,
@@ -17,7 +17,7 @@ if __name__ == '__main__':
     data_loader.dump_to_pickle()
 
     pipeline = BaseModelPipeline(result_path=RESULT_PATH, steps=[
-        RatioBasedPreprocessor(
+        RatioBasedLabelPreprocessor(
             one_hot_features=['gender'],
             label_features=['product', 'campaign_id','webpage_id','product_category_1', 'product_category_2']
         ),

@@ -32,8 +32,11 @@ class BaseDataLoader(PickleObject):
     def load_data(self):
         """Load training and test data from CSV files."""
         self.train_data = pd.read_csv(self.train_file, parse_dates=list(self.date_columns))
+        self.train_data.columns = self.train_data.columns.str.lower()
+
         if self.test_file:
             self.test_data = pd.read_csv(self.test_file, parse_dates=list(self.date_columns))
+            self.test_data.columns = self.test_data.columns.str.lower()
         else:
             self.test_data = None
         self._preprocess_data()
