@@ -9,6 +9,7 @@ class Undersampler(BasePreprocessor, TransformerMixin):
     the preprocessor that keeps all is_click=1 rows and samples is_click=0
     """
     def __init__(self, sample_number=None, return_splited=False,target_column = 'is_click', positive_value=1, negative_value=0, random_state=42):
+        super().__init__()
         self.preprocessor_name = 'UnderSampler'
         self.target_column = target_column
         self.sample_number = sample_number
@@ -18,8 +19,10 @@ class Undersampler(BasePreprocessor, TransformerMixin):
         self.negative_value = negative_value
         self.random_state = random_state
 
-    def fit(self, X: pd.DataFrame, y: np.array):
-        self.df = X.copy()
+    def fit(self, X: pd.DataFrame, y: np.array = None):
+        self.df = X.copy(deep=True)
+        if y is not None:
+            self.df[self.target_column] = y
         return self
 
     def transform(self, X: pd.DataFrame=None, y=None):

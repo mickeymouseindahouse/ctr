@@ -25,5 +25,5 @@ class PickleObject:
             f.write(results)
 
     @staticmethod
-    def load_pickle(self, file_name) -> 'PickleObject':
+    def load_pickle( file_name) -> 'PickleObject':
         return pickle.load(open(file_name, "rb"))
