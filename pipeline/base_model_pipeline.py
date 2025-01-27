@@ -1,12 +1,13 @@
 import json
 from typing import List
-
+import wandb
 from sklearn.metrics import f1_score
 from sklearn.model_selection import GridSearchCV
 from sklearn.pipeline import Pipeline
-
+import os
+import sys
 from pickle_object import PickleObject
-
+from constants import PR0JECT_NAME
 
 class BaseModelPipeline(PickleObject):
     def __init__(self, steps: List[PickleObject], grid_search_params: dict[str, dict]=None, scoring=f1_score, random_state=42, result_path: str = ''):
@@ -76,9 +77,43 @@ class BaseModelPipeline(PickleObject):
         return self.best_score, self.best_params
 
     def dump_results(self, class_name: str = None, results: str = ''):
-        results = f"best_params = {self.best_params}\n"
-        results += f"best_model = {self.best_model}\n"
-        results += f"best_score = {self.best_score}\n"
+        prompts = ['best_params', 'best_model', 'best_score']
+        results_dict = {}
+        for prompt in prompts:
+            prompt_value = getattr(self, prompt)
+            if prompt == 'best_model':
+                for step_name, step in prompt_value.steps:
+                    if hasattr(step, "get_params"):
+                        step_params = step.get_params()
+                        for k, v in step_params.items():
+                            try:
+                                for sub_key, sub_value in v.items():
+                                    results_dict[f"{step_name}_{sub_key}"] = sub_value
+                            except AttributeError:
+                                results_dict[f"{step_name}_{k}"] = v
+            else:
+                try:
+                    for k,v in prompt_value.items():
+                        results_dict[f"{prompt}_{k}"] = v #just k
+                except Exception as e:
+                    results_dict[prompt] = prompt_value
+
+        results_dict['experiment']= os.path.abspath(sys.argv[0]).split('/')[-1].split('.py')[0]
+        wandb.init(project=PR0JECT_NAME)
+        for k, v in results_dict.items():
+            results += f"{k} = {v}\n"
+            try:
+                wandb.log({k: v})
+            except:
+                wandb.log({k: str(v)})
         super().dump_results(results=results)
+
+        """
+        import joblib
+        joblib.dump(self, "base_model_pipeline.joblib")
+        artifact = wandb.Artifact("model", type="pipeline")
+        artifact.add_file("base_model_pipeline.joblib")
+        wandb.log_artifact(artifact)
+        """
 
 
