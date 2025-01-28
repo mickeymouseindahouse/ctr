@@ -9,12 +9,14 @@ from preprocessor.fill_na_preprocessor import FillNaPreprocessor
 from preprocessor.sampler import Sampler
 from sklearn.ensemble import RandomForestClassifier
 
-RESULT_PATH = 'Lisa004'
+RESULT_PATH = 'Lisa006'
 
 if __name__ == '__main__':
     data_loader = TrainLoaderSessionSplitter(result_path=RESULT_PATH,
                                              train_file=os.path.join(getroot(), "data/train_dataset_full.csv"),
-                                             preprocessing=BaseModelPipeline(steps=[Sampler(), FillNaPreprocessor()]))
+                                             preprocessing=BaseModelPipeline(steps=[Sampler(positive_value=-1,
+                                                                                            positive_value_frac=0.75),
+                                                                                    FillNaPreprocessor()]))
     data_loader.load_data()
     X_train, X_test, y_train, y_test = data_loader.split_data()
     data_loader.dump_to_pickle()
