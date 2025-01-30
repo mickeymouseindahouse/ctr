@@ -99,13 +99,13 @@ class BaseModelPipeline(PickleObject):
                     results_dict[prompt] = prompt_value
 
         results_dict['experiment']= os.path.abspath(sys.argv[0]).split('/')[-1].split('.py')[0]
-        wandb.init(project=PR0JECT_NAME)
-        for k, v in results_dict.items():
-            results += f"{k} = {v}\n"
-            try:
-                wandb.log({k: v})
-            except:
-                wandb.log({k: str(v)})
+        # wandb.init(project=PR0JECT_NAME)
+        # for k, v in results_dict.items():
+        #     results += f"{k} = {v}\n"
+        #     try:
+        #         wandb.log({k: v})
+        #     except:
+        #         wandb.log({k: str(v)})
         super().dump_results(results=results)
 
         """

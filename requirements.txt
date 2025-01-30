@@ -6,3 +6,5 @@ scipy
 scikit-learn==1.5.1
 dill~=0.3.9
 invoke
+wandb
+imblearn
