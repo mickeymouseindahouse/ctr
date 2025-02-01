@@ -36,7 +36,7 @@ class CTRLabelEncoder(CTREncoder):
             self.original_to_encoded_mapping[feature] = dict(zip(keys, encoded_keys))
         return self
 
-    def transform(self, X):
+    def transform(self, X, y=None):
         df = X.copy()
         for feature, mapping in self.original_to_encoded_mapping.items():
             df[feature] = df[feature].map(mapping).fillna(0)

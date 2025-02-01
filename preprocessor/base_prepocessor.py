@@ -34,7 +34,7 @@ class BasePreprocessor(PickleObject, TransformerMixin, BaseEstimator):
 
     def fit_transform(self, X: pd.DataFrame, y=None) -> pd.DataFrame:
         """Fit and transform the data."""
-        return self.fit(X, y).transform(X)
+        return self.fit(X, y).transform(X, y)
 
     def save_transformed(self):
         if self.X_transformed is None:

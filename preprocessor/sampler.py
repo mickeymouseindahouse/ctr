@@ -38,7 +38,7 @@ class UnderSampler(Sampler):
         only_positive = self.df.loc[self.df[self.target_column] == self.positive_value].sample(
             frac=self.positive_frac,
             random_state=self.random_state)
-        only_negative = self.df.loc[self.df[self.target_column] == self.positive_value].sample(
+        only_negative = self.df.loc[self.df[self.target_column] != self.positive_value].sample(
             n=int(only_positive.shape[0] * self.negative_frac),
             random_state=self.random_state, replace=True)
         transformed_df = pd.concat([only_positive, only_negative])

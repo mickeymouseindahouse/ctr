@@ -47,6 +47,9 @@ class BaseDataLoader(PickleObject):
             self.train_data = self.preprocessing.fit_transform(X=self.train_data)
         if self.test_data is not None:
             self.test_data = self.preprocessing.transform(X=self.test_data)
+        self.train_data["day"] = self.train_data["datetime"].dt.day
+        if self.test_data is not None:
+            self.test_data["day"] = self.test_data["datetime"].dt.day
 
 
     def split_data(self, test_size=0.2, random_state=42) -> tuple:

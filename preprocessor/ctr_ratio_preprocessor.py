@@ -26,7 +26,7 @@ class CTREncoder(BasePreprocessor, TransformerMixin):
             self.feature_maps[feature] = df.groupby(feature)[self.target_column].mean().to_dict()
         return self
 
-    def transform(self, X):
+    def transform(self, X, y=None):
         df = X.copy()
         for feature, mapping in self.feature_maps.items():
             df[feature] = df[feature].map(mapping).fillna(0)
