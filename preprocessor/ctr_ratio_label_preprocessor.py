@@ -14,6 +14,7 @@ class CTRLabelEncoder(CTREncoder):
     the preprocessor that uses mean ctr values to create labels for features
     """
     def __init__(self, target_column='is_click', y=None):
+        super().__init__()
         self.target_column = target_column
         self.feature_maps = {}
         self.original_to_encoded_mapping = {}
