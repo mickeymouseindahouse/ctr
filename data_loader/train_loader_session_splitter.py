@@ -1,5 +1,5 @@
 from data_loader.base_data_loader import BaseDataLoader
-
+from constants import TARGET_COLUMN
 
 class TrainLoaderSessionSplitter(BaseDataLoader):
     """
@@ -31,7 +31,7 @@ class TrainLoaderSessionSplitter(BaseDataLoader):
         test_df.drop(["datetime"], axis=1, inplace=True)
 
         X_train, X_test, y_train, y_test = \
-            train_df.drop(columns=['is_click']), test_df.drop(columns=['is_click']), train_df[['is_click']].values.ravel(), \
+            train_df.drop(columns=[TARGET_COLUMN]), test_df.drop(columns=[TARGET_COLUMN]), train_df[[TARGET_COLUMN]].values.ravel(), \
             test_df[
-                ['is_click']].values.ravel()
+                [TARGET_COLUMN]].values.ravel()
         return X_train, X_test, y_train, y_test

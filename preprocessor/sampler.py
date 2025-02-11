@@ -2,7 +2,7 @@ import pandas as pd
 from preprocessor.base_prepocessor import BasePreprocessor
 from sklearn.base import TransformerMixin
 import numpy as np
-
+from constants import TARGET_COLUMN
 
 class Sampler(BasePreprocessor, TransformerMixin):
     """
@@ -10,7 +10,7 @@ class Sampler(BasePreprocessor, TransformerMixin):
     """
 
     def __init__(self,
-                 target_column='is_click',
+                 target_column=TARGET_COLUMN,
                  positive_value=1,
                  positive_frac=1.0,
                  negative_frac=1.0,
