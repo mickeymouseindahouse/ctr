@@ -4,34 +4,8 @@ from sklearn.compose import ColumnTransformer
 from sklearn.preprocessing import OneHotEncoder, StandardScaler
 from preprocessor.base_prepocessor import BasePreprocessor
 from constants import ONE_HOT_ENCODER, SCALER, CTR_LABEL_ENCODER
-from sklearn.base import TransformerMixin
-
-
-class CTREncoder(BasePreprocessor, TransformerMixin):
-    """
-    the preprocessor that uses mean ctr values per feature inplace of the feature itself
-    """
-    def __init__(self, target_column='is_click', y=None):
-        self.target_column = target_column
-        self.feature_maps = {}
-        self.y = y
-
-    def fit(self, X, y=None):
-        df = X.copy()
-        if y ==None:
-            y = self.y
-        df[self.target_column] = y
-        feature_columns = [c for c in df.columns if c != self.target_column]
-        for feature in feature_columns:
-            self.feature_maps[feature] = df.groupby(feature)[self.target_column].mean().to_dict()
-        return self
-
-    def transform(self, X, y=None):
-        df = X.copy()
-        for feature, mapping in self.feature_maps.items():
-            df[feature] = df[feature].map(mapping).fillna(0)
-        return df
-
+from preprocessor.ctr_ratio_encoder import CTREncoder
+from constants import TARGET_COLUMN
 
 class RatioBasedPreprocessor(BasePreprocessor):
 
@@ -39,7 +13,7 @@ class RatioBasedPreprocessor(BasePreprocessor):
                  one_hot_features: Optional[list[str]] = None,
                  label_features: Optional[list[str]] = None,
                  result_path: str = '',
-                 target_column: str = 'is_click'):
+                 target_column: str = TARGET_COLUMN):
         self.result_path = result_path
         super().__init__(result_path=result_path)
         self.preprocessor = None

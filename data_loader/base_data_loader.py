@@ -1,14 +1,13 @@
 from typing import Tuple
-
+from constants import TARGET_COLUMN
 import pandas as pd
 from sklearn.model_selection import train_test_split
-
 from pickle_object import PickleObject
 from pipeline.base_model_pipeline import BaseModelPipeline
 
 
 class BaseDataLoader(PickleObject):
-    def __init__(self, train_file: str, test_file: str = None, target_column: str = 'is_click',
+    def __init__(self, train_file: str, test_file: str = None, target_column: str = TARGET_COLUMN,
                  date_columns: Tuple[str, ...] = ('DateTime',), preprocessing: BaseModelPipeline = None, result_path: str = ''):
         """
         Initialize the DataLoader.
