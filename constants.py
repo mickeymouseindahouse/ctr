@@ -4,6 +4,7 @@ SCALER = "scaler"
 ONE_HOT_ENCODER = "one_hot_encoder"
 LABEL_ENCODER = "label_encoder"
 CTR_LABEL_ENCODER = "ctr_label_encoder"
+CTR_LABEL_USER_ENCODER = "ctr_per_user"
 PR0JECT_NAME = 'Kaggle_CTR'
 TARGET_COLUMN ='is_click'
 

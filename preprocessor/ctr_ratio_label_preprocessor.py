@@ -5,6 +5,7 @@ from sklearn.preprocessing import OneHotEncoder, StandardScaler
 from constants import ONE_HOT_ENCODER, SCALER, CTR_LABEL_ENCODER, TARGET_COLUMN
 from preprocessor.ctr_ratio_preprocessor import RatioBasedPreprocessor
 from preprocessor.ctr_ratio_label_encoder import CTRLabelEncoder
+from constants import TARGET_COLUMN
 
 class RatioBasedLabelPreprocessor(RatioBasedPreprocessor):
 
