@@ -94,12 +94,12 @@ if uploaded_file is not None:
             session_ctr = df.groupby("webpage_id")["Clicks"].agg(Impressions="count", Clicks="sum").reset_index()
             session_ctr["CTR (%)"] = (session_ctr["Clicks"] / session_ctr["Impressions"]) * 100  # CTR calculation
 
-            st.write("### 📊 Predicted Click-Through Rate (CTR) Per Product & Per Web Page")
+            st.write("### 📊 Predicted Click-Through Rate (CTR) Per Product & Per Web Page for the budget analysis")
 
             col1, col2 = st.columns(2)
 
             with col1:
-                st.write("#### 📌 CTR by Product")
+                st.write("#### 📌 Predicted CTR by Product")
                 fig, ax = plt.subplots(figsize=(6, 4))
                 sns.barplot(x="product", y="CTR (%)", data=product_ctr, palette="coolwarm", ax=ax)
                 ax.set_title("CTR for Products", fontsize=12)
@@ -108,7 +108,7 @@ if uploaded_file is not None:
                 st.pyplot(fig)
 
             with col2:
-                st.write("#### 📌 CTR by WebPage")
+                st.write("#### 📌 Predicted CTR by WebPage")
                 fig, ax = plt.subplots(figsize=(6, 4))
                 sns.barplot(x="webpage_id", y="CTR (%)", data=session_ctr, palette="viridis", ax=ax)
                 ax.set_title("CTR for Web Pages", fontsize=12)
