@@ -124,3 +124,5 @@ class BaseModelPipeline(PickleObject):
         artifact.add_file("base_model_pipeline.joblib")
         wandb.log_artifact(artifact)
         """
+
+
