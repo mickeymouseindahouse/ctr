@@ -8,3 +8,4 @@ invoke
 wandb
 imblearn
 catboost
+streamlit

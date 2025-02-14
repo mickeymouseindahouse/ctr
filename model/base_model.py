@@ -1,7 +1,7 @@
 from typing import Optional, Type
 
 from sklearn.base import BaseEstimator
-from sklearn.metrics import f1_score
+from sklearn.metrics import f1_score, roc_auc_score
 from sklearn.model_selection import GridSearchCV
 
 from pickle_object import PickleObject
@@ -10,7 +10,7 @@ from pickle_object import PickleObject
 class BaseModel(PickleObject, BaseEstimator):
     def __init__(self, model: BaseEstimator,
                  grid_search_params:Optional[dict] = None,
-                 scoring=f1_score, random_state=42, result_path: str = ''):
+                 scoring=roc_auc_score, random_state=42, result_path: str = ''):
         """
         Base model class.
 

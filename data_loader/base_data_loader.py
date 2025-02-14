@@ -8,7 +8,8 @@ from pipeline.base_model_pipeline import BaseModelPipeline
 
 class BaseDataLoader(PickleObject):
     def __init__(self, train_file: str, test_file: str = None, target_column: str = TARGET_COLUMN,
-                 date_columns: Tuple[str, ...] = ('DateTime',), preprocessing: BaseModelPipeline = None, result_path: str = ''):
+                 date_columns: Tuple[str, ...] = ('DateTime',), preprocessing: BaseModelPipeline = None, result_path: str = '',
+                 train_data: pd.DataFrame = None, test_data: pd.DataFrame = None) -> None:
         """
         Initialize the DataLoader.
 
@@ -27,14 +28,18 @@ class BaseDataLoader(PickleObject):
         self.test_data = None
         self.date_columns = date_columns
         self.preprocessing = preprocessing
+        self.train_data = train_data
+        self.test_data = test_data
 
     def load_data(self):
         """Load training and test data from CSV files."""
-        self.train_data = pd.read_csv(self.train_file, parse_dates=list(self.date_columns))
+        self.train_data = pd.read_csv(self.train_file, parse_dates=list(self.date_columns)) \
+            if self.train_data is None else self.train_data
         self.train_data.columns = self.train_data.columns.str.lower()
 
-        if self.test_file:
-            self.test_data = pd.read_csv(self.test_file, parse_dates=list(self.date_columns))
+        if self.test_file is not None or self.test_data is not None:
+            self.test_data = pd.read_csv(self.test_file, parse_dates=list(self.date_columns)) \
+                if self.test_data is None else self.test_data
             self.test_data.columns = self.test_data.columns.str.lower()
         else:
             self.test_data = None
