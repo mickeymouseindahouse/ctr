@@ -40,4 +40,4 @@ class BasePreprocessor(PickleObject, TransformerMixin, BaseEstimator):
         if self.X_transformed is None:
             raise ValueError("No transformed data available")
         (pd.DataFrame(self.X_transformed).
-         to_csv(f'{os.getenv('PROJECT_ROOT')}/results/{self.__class__.__name__}-{datetime.now().strftime('%Y%m%d_%H%M%S')}.csv'))
+         to_csv(f"{os.getenv('PROJECT_ROOT')}/results/{self.__class__.__name__}-{datetime.now().strftime('%Y%m%d_%H%M%S')}.csv"))

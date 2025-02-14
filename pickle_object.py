@@ -11,7 +11,7 @@ class PickleObject:
         """
         Save the fitted preprocessor to a pickle file.
         """
-        file_name = f'{class_name or self.__class__.__name__}-{datetime.now().strftime('%Y%m%d_%H%M%S')}.pkl' \
+        file_name = f"{class_name or self.__class__.__name__}-{datetime.now().strftime('%Y%m%d_%H%M%S')}.pkl" \
             if file_name is None else file_name
         file_path = os.path.join(os.getenv('PROJECT_ROOT'), 'results', self.result_path, file_name)
         os.makedirs(os.path.dirname(file_path), exist_ok=True)
@@ -20,7 +20,7 @@ class PickleObject:
 
     def dump_results(self, class_name: str = None, results: str = ''):
         file_path = os.path.join(os.getenv('PROJECT_ROOT'), 'results', self.result_path,
-                                 f'CV-{class_name or self.__class__.__name__}-{datetime.now().strftime('%Y%m%d_%H%M%S')}.txt')
+                                 f"CV-{class_name or self.__class__.__name__}-{datetime.now().strftime('%Y%m%d_%H%M%S')}.txt")
         os.makedirs(os.path.dirname(file_path), exist_ok=True)
         with open(file_path, "w") as f:
             f.write(results)

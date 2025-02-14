@@ -47,6 +47,10 @@ class BaseModelPipeline(PickleObject):
         """Make predictions."""
         return self.pipeline.predict(X)
 
+    def predict_proba(self, X):
+        """Make probability predictions."""
+        return self.pipeline.predict_proba(X)
+
     def fit_predict(self, X, y):
         """Make predictions."""
         self.fit(X, y)

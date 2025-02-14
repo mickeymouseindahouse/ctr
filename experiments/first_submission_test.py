@@ -25,7 +25,7 @@ if __name__ == '__main__':
     X_train, X_val, y_train, y_val = data_loader.split_data()
     data_loader.dump_to_pickle()
 
-    pipeline = BaseModelPipeline.load_pickle(os.path.join(getroot(), 'results/roc_no_under_submission/rocauc.pkl'))
+    pipeline = BaseModelPipeline.load_pickle(os.path.join(getroot(), 'results/roc_submission/rocauc.pkl'))
     print(pipeline.best_model.score(X_val, y_val))
 
     X_test = data_loader.test_data
@@ -35,3 +35,4 @@ if __name__ == '__main__':
     y_real = pd.read_csv(getroot() + '/data/y_test_1st.csv', header=None)
     print(roc_auc_score(y_real, preds))
     print(f1_score(y_real, preds))
+    print(pipeline.best_model.predict_proba(X_test)[:, 1])

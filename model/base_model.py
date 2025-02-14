@@ -38,6 +38,10 @@ class BaseModel(PickleObject, BaseEstimator):
         """Make predictions."""
         return self.model.predict(X)
 
+    def predict_proba(self, X):
+        """Make probability predictions."""
+        return self.model.predict_proba(X)
+
     def fit_predict(self, X, y):
         """Make predictions."""
         self.fit(X, y)
