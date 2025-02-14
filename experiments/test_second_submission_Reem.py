@@ -22,7 +22,6 @@ categorical_cols = ['gender', 'product', 'campaign_id']
 def custom_median(series: pd.Series) -> float:
     return series.median()
 
-        # Create preprocessors
 num_preprocessor = FillNaPreprocessor(
 columns=numerical_cols,
 fill_algo=FillAlgo.CUSTOM,

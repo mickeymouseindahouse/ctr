@@ -2,6 +2,7 @@ import os.path
 import sys
 from io import BytesIO
 
+import numpy as np
 import pandas as pd
 import streamlit as st
 from matplotlib import pyplot as plt
@@ -11,14 +12,14 @@ sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), "..")))
 
 
 from data_loader.train_loader_session_splitter import TrainLoaderSessionSplitter
-from preprocessor.fill_na_preprocessor import FillNaPreprocessor
+from preprocessor.fill_na_preprocessor import FillNaPreprocessor, FillAlgo
 from pipeline.base_model_pipeline import BaseModelPipeline
 from constants import getroot
 
 
 @st.cache_resource
 def load_model():
-    return BaseModelPipeline.load_pickle(os.path.join(getroot(), "results/roc_submission/rocauc.pkl"))
+    return BaseModelPipeline.load_pickle(os.path.join(getroot(), "results/second_submission/f1.pkl"))
 
 st.title("User clicks prediction provided by the Clickers' Clique team")
 
@@ -28,19 +29,45 @@ model = load_model()
 uploaded_file = st.file_uploader("Upload a CSV file with the test data", type=["csv"])
 
 if uploaded_file is not None:
+    numerical_cols = ['city_development_index', 'age_level', 'user_depth']
+    categorical_cols = ['gender', 'product', 'campaign_id']
+
     df = pd.read_csv(uploaded_file, parse_dates=["DateTime"])
 
     try:
-        print(uploaded_file)
-        data_loader = TrainLoaderSessionSplitter(train_file=os.path.join(getroot(), "data/train_dataset_full.csv"),
-                                                 test_data=df,
-                                                 preprocessing=BaseModelPipeline(steps=[FillNaPreprocessor()]))
+        def custom_median(series: pd.Series) -> float:
+            return series.median()
+
+        num_preprocessor = FillNaPreprocessor(
+            columns=numerical_cols,
+            fill_algo=FillAlgo.CUSTOM,
+            custom_function=custom_median
+        )
+        cat_preprocessor = FillNaPreprocessor(
+            columns=categorical_cols,
+            fill_algo=FillAlgo.MODE
+        )
+
+        data_loader = TrainLoaderSessionSplitter(
+            train_file=os.path.join(getroot(), "data/train_dataset_full.csv"),
+            test_data=df,
+            preprocessing=BaseModelPipeline(
+                steps=[
+                    ("numerical_imputer", num_preprocessor),
+                    ("categorical_imputer", cat_preprocessor)
+                ]
+            )
+        )
         data_loader.load_data()
         X_test = data_loader.test_data
+        X_test.drop('datetime', axis=1, inplace=True)
+        for col in categorical_cols:
+            X_test[col] = X_test[col].astype(str)
 
         predictions = model.best_model.predict_proba(X_test)[:, 1]
         df["Click Probability Predictions"] = predictions
-        df["Clicks"] = model.best_model.predict(X_test)
+        click_preds = model.best_model.predict(X_test)
+        df["Clicks"] = np.where(click_preds == -1, 0, 1)
 
         csv_buffer = BytesIO()
         pd.DataFrame(predictions).to_csv(csv_buffer, index=None, header=None)
