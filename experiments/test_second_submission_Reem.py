@@ -8,12 +8,19 @@ from data_loader.train_loader_session_splitter import TrainLoaderSessionSplitter
 from model.base_model import BaseModel
 from pipeline.base_model_pipeline import BaseModelPipeline
 from preprocessor.ctr_ratio_label_preprocessor import RatioBasedLabelPreprocessor
-from preprocessor.fill_na_preprocessor import FillNaPreprocessor
+from preprocessor.fill_na_preprocessor import FillNaPreprocessor, FillAlgo
 from sklearn.ensemble import RandomForestClassifier
 
 from preprocessor.sampler import OverSampler, UnderSampler
 
 RESULT_PATH = 'first_submission'
+
+numerical_cols = ['city_development_index', 'age_level', 'user_depth']
+categorical_cols = ['gender', 'product', 'campaign_id']
+
+
+def custom_median(series: pd.Series) -> float:
+    return series.median()
 
         # Create preprocessors
 num_preprocessor = FillNaPreprocessor(
@@ -51,7 +58,8 @@ for col in categorical_cols:
     X_train[col] = X_train[col].astype(str)
     X_val[col] = X_val[col].astype(str)
 
-pipeline = BaseModelPipeline.load_pickle(os.path.join(getroot(), 'results/first_submission/BaseModelPipeline-20250214_153553.pkl'))
+pipeline = BaseModelPipeline.load_pickle(os.path.join(getroot(), 'results/second_submission/f1.pkl'))
+print(pipeline.best_params)
 print(pipeline.best_model.score(X_val, y_val))
 
 X_test = data_loader.test_data
@@ -68,7 +76,7 @@ print(np.bincount(np.array(preds, dtype=np.int64)))
 pd.Series(preds).to_csv(getroot() + '/results/second_submission/y_preds.csv', index=False, header=False)
 
 from sklearn.metrics import confusion_matrix, f1_score
-y_test = pd.read_csv('/content/ctr/data/y_test_1st.csv', header=None)[0].values
+y_test = pd.read_csv(getroot() + '/data/y_test_1st.csv', header=None)
 f1 = f1_score(y_test, preds)
 print(f'F1 Score on Test Set: {f1:.3f}')
 

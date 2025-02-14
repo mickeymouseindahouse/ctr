@@ -13,10 +13,10 @@ from model.base_model import BaseModel
 from pipeline.base_model_pipeline import BaseModelPipeline
 from preprocessor.ctr_ratio_label_preprocessor import RatioBasedLabelPreprocessor
 from preprocessor.fill_na_preprocessor import FillNaPreprocessor, FillAlgo
-from sklearn.metrics import confusion_matrix, f1_score, make_scorer
+from sklearn.metrics import confusion_matrix, f1_score, make_scorer, roc_auc_score
 from sklearn.model_selection import GridSearchCV
 
-RESULT_PATH = 'first_submission'
+RESULT_PATH = 'second_submission'
 
 if __name__ == '__main__':
     # Define numerical and categorical columns
@@ -95,18 +95,25 @@ if __name__ == '__main__':
                 loss_function='Logloss'  # Explicitly set loss function to Logloss
             )))
         ],
+
         grid_search_params={
-            "classifier": {
-                "model__depth": [4, 6, 8],
-                "model__iterations": [300, 500],
-                "model__learning_rate": [0.03, 0.1],
-                "model__l2_leaf_reg": [1, 5, 10]
-            }
+            # "classifier": {
+            #     "model__depth": [4, 6, 8, 10],
+            #     "model__iterations": [50, 100, 300, 500],
+            #     "model__learning_rate": [0.01, 0.03, 0.1],
+            #     "model__l2_leaf_reg": [1, 5, 10]
+            # }
+                "classifier": {
+                    "model__depth": [8],
+                    "model__iterations": [100],
+                    "model__learning_rate": [0.03],
+                    "model__l2_leaf_reg": [10]
+                }
         },
         scoring=f1_scorer  # Use the valid F1 scorer
     )
 
     # Train with F1 scoring
     pipeline.grid_search(X_train, y_train, cv=3)
-    pipeline.dump_to_pickle()
+    pipeline.dump_to_pickle(file_name='f1.pkl')
     pipeline.dump_results()
