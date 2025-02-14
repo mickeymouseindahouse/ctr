@@ -1,7 +1,7 @@
 import json
 from typing import List
 import wandb
-from sklearn.metrics import f1_score
+from sklearn.metrics import log_loss
 from sklearn.model_selection import GridSearchCV
 from sklearn.pipeline import Pipeline
 import os
@@ -9,8 +9,10 @@ import sys
 from pickle_object import PickleObject
 from constants import PR0JECT_NAME
 
+
+
 class BaseModelPipeline(PickleObject):
-    def __init__(self, steps: List[PickleObject], grid_search_params: dict[str, dict]=None, scoring=f1_score, random_state=42, result_path: str = ''):
+    def __init__(self, steps: List[tuple], grid_search_params: dict[str, dict]=None, scoring=log_loss, random_state=42, result_path: str = ''):
         """
         Initialize the pipeline.
 
@@ -19,14 +21,13 @@ class BaseModelPipeline(PickleObject):
             grid_search_params: dict of parameters to pass to the pipeline. key is class name, value is param dict for class
         """
         super().__init__(result_path)
-        self.pipeline = Pipeline([
-            (step.__class__.__name__, step) for step in steps])
+        self.pipeline = Pipeline(steps)
         self.grid_search_params = {
-            f"{class_name}__{param_name}": values
-            for class_name, params in (grid_search_params or {}).items()
+            f"{step_name}__{param_name}": values
+            for step_name, params in (grid_search_params or {}).items()
             for param_name, values in params.items()
         }
-        self.scoring = scoring
+        self.scoring = scoring  # Now using Logloss
         self.best_model = None
         self.best_score = None
         self.best_params = None
@@ -47,10 +48,6 @@ class BaseModelPipeline(PickleObject):
         """Make predictions."""
         return self.pipeline.predict(X)
 
-    def predict_proba(self, X):
-        """Make probability predictions."""
-        return self.pipeline.predict_proba(X)
-
     def fit_predict(self, X, y):
         """Make predictions."""
         self.fit(X, y)
@@ -65,20 +62,28 @@ class BaseModelPipeline(PickleObject):
         """Evaluate the model on test data."""
         return self.score(X, y)
 
+    @property
+    def _estimator_type(self):
+        # Delegate to the wrapped model's estimator type (e.g., 'classifier' or 'regressor')
+        return self.model._estimator_type
+
+
     def grid_search(self, X_train, y_train, cv=5, verbose=5, n_jobs=1):
         """Perform grid search to optimize hyperparameters."""
-
-        def wrapper_scorer(estimator, X, y):
-            y_pred = estimator.predict(X)
-            return self.scoring(y, y_pred)
-
         print("Starting GridSearchCV")
-        grid_search = GridSearchCV(self.pipeline, self.grid_search_params, cv=cv, scoring=wrapper_scorer, verbose=verbose, n_jobs=n_jobs)
+        grid_search = GridSearchCV(
+            self.pipeline, 
+            param_grid=self.grid_search_params, 
+            cv=cv, 
+            scoring=self.scoring,  # Use the stored scoring function (e.g., f1_score)
+            verbose=verbose, 
+            n_jobs=n_jobs
+        )
         grid_search.fit(X_train, y_train)
         self.best_model = grid_search.best_estimator_
-        self.best_score, self.best_params = grid_search.best_score_, grid_search.best_params_
-        print("GridSearchCV complete with best score: %f" % self.best_score)
-        return self.best_score, self.best_params
+        self.best_score = grid_search.best_score_
+        print(f"GridSearchCV complete with best score: {self.best_score}")
+        return self.best_score
 
     def dump_results(self, class_name: str = None, results: str = ''):
         prompts = ['best_params', 'best_model', 'best_score']
@@ -119,5 +124,3 @@ class BaseModelPipeline(PickleObject):
         artifact.add_file("base_model_pipeline.joblib")
         wandb.log_artifact(artifact)
         """
-
-
