@@ -97,18 +97,12 @@ if __name__ == '__main__':
         ],
 
         grid_search_params={
-            # "classifier": {
-            #     "model__depth": [4, 6, 8, 10],
-            #     "model__iterations": [50, 100, 300, 500],
-            #     "model__learning_rate": [0.01, 0.03, 0.1],
-            #     "model__l2_leaf_reg": [1, 5, 10]
-            # }
-                "classifier": {
-                    "model__depth": [8],
-                    "model__iterations": [100],
-                    "model__learning_rate": [0.03],
-                    "model__l2_leaf_reg": [10]
-                }
+            "classifier": {
+                "model__depth": [4, 6, 8, 10],
+                "model__iterations": [50, 100, 300, 500],
+                "model__learning_rate": [0.01, 0.03, 0.1],
+                "model__l2_leaf_reg": [1, 5, 10]
+            }
         },
         scoring=f1_scorer  # Use the valid F1 scorer
     )
